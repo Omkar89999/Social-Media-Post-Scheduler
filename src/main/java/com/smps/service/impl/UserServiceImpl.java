@@ -1,5 +1,6 @@
 package com.smps.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
@@ -10,31 +11,29 @@ import com.smps.dto.UserDto;
 import com.smps.entity.User;
 import com.smps.repo.UserRepo;
 import com.smps.service.UserService;
+
 @Service
-public class UserServiceImpl implements UserService{
-	
+public class UserServiceImpl implements UserService {
+
 	@Autowired
 	private UserRepo userRepo;
-	
+
 	@Autowired
 	private ModelMapper modelMapper;
 
 	@Override
 	public UserDto registerUser(UserDto userDto) {
-	    User user = modelMapper.map(userDto, User.class);
+		User user = modelMapper.map(userDto, User.class);
 
-	   
-	    User savedUser = userRepo.save(user);
+		user.setCreated_at(LocalDateTime.now());
+		User savedUser = userRepo.save(user);
 
-	    return modelMapper.map(savedUser, UserDto.class);
+		return modelMapper.map(savedUser, UserDto.class);
 	}
-
 
 	@Override
 	public Optional<UserDto> findUserByUsername(String username) {
-	    return userRepo.findByUsername(username)
-	                         .map(user -> modelMapper.map(user, UserDto.class));
+		return userRepo.findByUsername(username).map(user -> modelMapper.map(user, UserDto.class));
 	}
-
 
 }
